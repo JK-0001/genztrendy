@@ -1,0 +1,18 @@
+# python
+__pycache__/
+.venv/
+*.pyc
+
+# env & secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit cloud artifacts
+.streamlit/
+
+# system
+.DS_Store
