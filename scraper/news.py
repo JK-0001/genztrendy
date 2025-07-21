@@ -1,22 +1,22 @@
-import os, requests, datetime as dt
+import os
+from dotenv import load_dotenv
+from eventregistry import *
 
-def fetch_news(api_key: str, query="education", page_size=20):
-    url = ("https://newsapi.org/v2/everything?"
-           f"q={query}&language=en&pageSize={page_size}&sortBy=publishedAt")
-    r = requests.get(url, headers={"X-Api-Key": api_key}, timeout=30)
-    r.raise_for_status()
-    return [
-        {
-            "id": art["url"],
-            "source": "news",
-            "title": art["title"],
-            "published_at": art["publishedAt"] or dt.datetime.utcnow().isoformat(),
-            "raw": art["content"] or "",
-            "link": art["url"],
-        }
-        for art in r.json()["articles"]
-    ]
+load_dotenv()
+er = EventRegistry(apiKey=os.getenv("EVENTREGISTRY_API_KEY"))
 
-if __name__ == "__main__":
-    for item in fetch_news(os.getenv("NEWSAPI_KEY", ""), "education India", 3):
-        print(item["title"])
+# get the USA URI
+inrUri = er.getLocationUri("INDIA") 
+
+q = QueryArticlesIter(
+    keywords = "education India",
+    lang = "eng",
+    sourceLocationUri = inrUri
+)
+
+for article in q.execQuery(er, sortBy = "date", maxItems = 1):
+    print("📰", article["title"])
+    print("📝", article["body"])
+    print("🔗", article["url"])
+    print("📅", article["date"])
+    print("-----------")
